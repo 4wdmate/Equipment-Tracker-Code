@@ -1,0 +1,44 @@
+@import "https://www.nerdfonts.com/assets/css/webfont.css";
+
+:root {
+    --side-pixel: 100px;
+}
+
+main {
+    display: sticky;
+}
+
+.side {
+    margin: 0;
+    padding: 0;
+    width: var(--side-pixel);
+    background-color: #f1f1f1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    overflow: auto;
+    text-align: center;
+}
+
+.side a{
+    display: inline-block;
+    color: #1d1d1d;
+    padding: 10px 0px;
+    background-color: rgb(155, 155, 155);
+    width: var(--side-pixel);
+}
+
+.side a:hover{
+    background-color: rgb(167, 130, 130);
+}
+
+main h6 {
+    padding-left: 6px;
+}
+
+.content {
+    margin-left: var(--side-pixel);
+    padding: 1px 16px;
+    height: 1000px;
+}
