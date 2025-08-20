@@ -42,3 +42,9 @@ main h6 {
     padding: 1px 16px;
     height: 1000px;
 }
+
+.facilityCard{
+    text-align: center;
+    width: 30%;
+    background-color: #f0f0f0;
+}
