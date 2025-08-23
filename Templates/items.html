@@ -1,0 +1,21 @@
+{% extends "base-facility.html" %}
+
+{% block facility_content %}
+    <div class="shift_text_content">
+        <h1>Item List</h1>
+        <p>Select one of the items below or create a new item by clicking the button below</p>
+        <a href="/facility/{{ facname }}/create_item" class="new_item_button">New Item</a>
+    </div>
+    {% for item in items %}
+        <a class="listed_item" href="/facility/{{ facname }}/item/{{ item['itemID'] }}">
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:10%;"><strong>{{ item["itemName"] }}</strong></td>
+                    <td style="width:10%;"> ?/{{ item["itemCount"] }} </td>
+                    <td style="width:70%;"> {{ item["itemDescription"] }} </td>
+                    <td style="width:10%;"> {{ item["facName"] }}-{{ item["itemID"] }} </td>
+                </tr>
+            </table>
+        </a>
+    {% endfor %}
+{% endblock %} 

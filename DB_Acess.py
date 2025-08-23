@@ -15,3 +15,12 @@ def GetAllFacilities():
                         FROM Facilities""").fetchall()
     db.close()
     return [row[0] for row in facilities]
+
+def GetAllItems(facName):
+    db = GetDB()
+    items = db.execute("""SELECT itemID, itemName, itemDescription, itemCount, itemLocation, itemPurchaseDate, itemNotes, item_facID, facName
+                        FROM Items
+                        JOIN Facilities ON Items.item_facID = Facilities.facID
+                        WHERE facName = ?""", (facName,)).fetchall()
+    db.close()
+    return [dict(row) for row in items]

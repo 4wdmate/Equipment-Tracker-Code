@@ -1,12 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<h2>Select one of the below facilities</h2>
-{% for facility in facilities %}
-<div class="facilityCard">
-    
-    <p>{{ facility }}</p>
+<div class="banner_background">
+    <h1 class='banner'>Facility Selection</h1>
 </div>
+<nav class='topbar'></nav>
+{% for facility in facilities %}
+<a href="/facility/{{ facility }}" class="facilityCard">
+    <div >
+        <p>{{ facility }}</p>
+    </div>
+</a>
 {% endfor %}
 {% endblock %}

@@ -10,7 +10,7 @@ def home():
 
 @app.route("/login")
 def login():
-    return render_template("log-in.html")
+    return render_template("login.html")
 
 @app.route("/facilities")
 def facilities():
@@ -20,20 +20,23 @@ def facilities():
 
 @app.route("/facility/<facName>")
 def facility(facName):
-    facData = facName
-    return render_template("Facility.html", facdata=facData)
+    return render_template("Facility.html", facname=facName)
 
 @app.route("/facility/<facName>/loan")
 def loan(facName):
-    facData = facName
-    return render_template("Facility.html", facdata=facData)
+    return render_template("loan.html", facname=facName)
 
 @app.route("/facility/<facName>/items")
 def items(facName):
-    return render_template("items.html", )
+    items = DB_Acess.GetAllItems(facName)
+    return render_template("items.html", facname=facName, items=items)
 
 @app.route("/facility/<facName>/items/(itemID)")
 def item(facName, itemID):
     return render_template("individual_item.html", )
+
+@app.route("/facility/<facName>/create_item", methods=["GET", "POST"])
+def create_item(facName):
+    return render_template("create_item.html", facname=facName)
 
 app.run(debug=True, port=5000)

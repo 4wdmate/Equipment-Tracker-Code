@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="banner_background">
+        <h1 class='banner'>{{ facname }} Facility</h1>
+    </div>
+    <nav class='topbar'>
+        <a href="/facility/{{ facname }}">Home</a>
+        <a href="/facility/{{ facname }}/loan">Loan</a>
+        <a href="/facility/{{ facname }}/items">Items </a>
+    </nav>
+    <content class='facility_content'>
+    {% block facility_content %}
+    {% endblock %}
+    </content>
+{% endblock %}
