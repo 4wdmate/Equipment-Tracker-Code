@@ -1,5 +1,82 @@
 {% extends "base-facility.html" %}
 
 {% block facility_content %}
-    <p>Test</p>
+    <div class="shift_text_content">
+        <h1>Lease an Item</h1>
+        <p>Here you can lease items from the facility.</p>
+        <div>
+            <form action="/facility/{{ facname }}/loan" method="POST">
+                <label for="itemID">Item</label><br>
+                <div style="position: relative; display: inline-block;">
+                    <input class="addnewinput" type="text" id="searchBox" placeholder="Search items..." autocomplete="off">
+                    <span id="searchIdOverlay" class="searchoverlay"></span> 
+                    <input type="hidden" id="selectedItemId" name="itemId"> 
+                </div>
+                <div id="searchResults" class="dropdown"></div><br>
+                
+                <br><button class="submitbutton" type="submit">Lease Item</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        async function fetchAndShowResults() {
+            const query = this.value;
+            const resultsDiv = document.getElementById("searchResults");
+
+            const response = await fetch(`/search_items?query=${encodeURIComponent(query)}&facName={{ facname }}`);
+            const items = await response.json();
+
+            // Clear old results
+            resultsDiv.innerHTML = "";
+
+            if (items.length > 0) {
+                items.forEach(item => {
+                    const option = document.createElement("div");
+
+                    // Create span for name
+                    const nameSpan = document.createElement("span");
+                    nameSpan.textContent = item.name;
+
+                    // Create span for ID (right-aligned)
+                    const idSpan = document.createElement("span");
+                    idSpan.textContent = `ID: ${item.id}`;
+                    idSpan.classList.add("itemId");
+
+                    // Append spans to option
+                    option.appendChild(nameSpan);
+                    option.appendChild(idSpan);
+
+                    option.onclick = () => {
+                        document.getElementById("searchBox").value = item.name; // fill in the box
+                        resultsDiv.style.display = "none";
+
+                        // Show the ID grayed out on the right side
+                        document.getElementById("searchIdOverlay").textContent = 'ID: ' + item.id;
+
+                        // Store the ID for form submission
+                        document.getElementById("selectedItemId").value = item.id;
+                    };
+                    resultsDiv.appendChild(option);
+                });
+                resultsDiv.style.display = "block";
+            } else {
+                resultsDiv.style.display = "none";
+            }
+        };
+
+        //search on input in the search box
+        document.getElementById("searchBox").addEventListener("input", fetchAndShowResults);
+        //search when clicking on the search box
+        document.getElementById("searchBox").addEventListener("focus", fetchAndShowResults);
+
+        // Hide results when clicking outside the search box or results
+        document.addEventListener("click", function(event) {
+            const resultsDiv = document.getElementById("searchResults");
+            if (!resultsDiv.contains(event.target) && event.target.id !== "searchBox") {
+                resultsDiv.style.display = "none"; 
+            }
+        });
+        
+    </script>
 {% endblock %}
