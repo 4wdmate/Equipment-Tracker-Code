@@ -31,15 +31,20 @@ def facility(facName):
 @app.route('/facility/<facName>/loan', methods=["GET", "POST"])
 def loan(facName):
     if request.method == "POST":
-        itemID = request.form.get("itemId")
-        borrowerName = request.form.get("borrowerName")
-        # Here you would handle the leasing logic, e.g., updating the database
-        # For now, we just print the item ID to the console
-        return redirect(f"/facility/{facName}")
+        itemID = request.form.get("ItemId")
+        borrowerID = request.form.get("BorrowerId")
+        signed = request.form.get("studentSignoff")
+        if signed == 'on':
+            signed = 1
+        else:
+            signed = 0
+        leaseDate = datetime.today().strftime('%Y-%m-%d')
+        DB_Acess.LeaseItem(itemID, borrowerID, facName, leaseDate, signed)
+        return redirect(f"/facility/{facName}/returns")
     return render_template("loan.html", facname=facName)
 
-# searches for items when leasing an item
-@app.route('/search_items')
+# searches for items when leasing an item (not a page)
+@app.route('/search_Item')
 def loan_search_items():
     query = request.args.get('query', '').lower()
     facName = request.args.get('facName', '')
@@ -50,6 +55,20 @@ def loan_search_items():
                {'id': item["itemID"], 'name': item["itemName"]} 
                for item in all_items 
                if query in item["itemName"].lower()
+               ]
+
+    return jsonify(results)
+
+# searches for borrowers when leasing an item (not a page)
+@app.route('/search_Borrower')
+def loan_search_borrowers():
+    query = request.args.get('query', '').lower()
+
+    all_borrowers = DB_Acess.GetAllBorrowers()
+    results = [
+               {'id': borrower["borrowerID"], 'name': borrower["borrowerName"]} 
+               for borrower in all_borrowers
+               if query in borrower["borrowerName"].lower()
                ]
 
     return jsonify(results)

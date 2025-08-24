@@ -6,80 +6,100 @@
         <p>Here you can lease items from the facility.</p>
         <div>
             <form action="/facility/{{ facname }}/loan" method="POST">
-                <label for="itemID">Item*</label><br>
+                <label for="itemID">Item:*</label><br>
                 <div style="position: relative; display: inline-block;">
-                    <input class="addnewinput" style="width: 200px;" type="text" id="searchBox" placeholder="Search items..." autocomplete="off" required>
-                    <span id="searchIdOverlay" class="searchoverlay"></span> 
-                    <input type="hidden" id="selectedItemId" name="itemId"> 
+                    <input class="addnewinput" style="width: 200px;" type="text" id="ItemsearchBox" placeholder="Search items..." autocomplete="off" required>
+                    <span id="ItemsearchIdOverlay" class="searchoverlay"></span> 
+                    <input type="hidden" id="selectedItemId" name="ItemId"> 
                 </div>
-                <div id="searchResults" class="dropdown"></div><br><br>
+                <div id="ItemsearchResults" class="dropdown"></div><br><br>
 
-                <label>Borrower* TODO</label><br>
-                <input class="addnewinput" style="width: 200px;" type="text" id="borrowerName" placeholder="Enter borrower's name" required><br>
-                
+                <label>Borrower:*</label><br>
+                <div style="position: relative; display: inline-block;">
+                    <input class="addnewinput" style="width: 200px;" type="text" id="BorrowersearchBox" placeholder="Search borrowers..." autocomplete="off" required><br>
+                    <span id="BorrowersearchIdOverlay" class="searchoverlay"></span> 
+                    <input type="hidden" id="selectedBorrowerId" name="BorrowerId">
+                </div>
+                <div id="BorrowersearchResults" class="dropdown"></div><br><br>
+
+                <label>Student Signoff:<br>
+                "i swear that i will not damage or steal the item."</label><br>
+                <input class="addnewinput" style="width: 20px; height: 20px;" type="checkbox" id="signed" name="studentSignoff"><br>
+
                 <br><button class="submitbutton" type="submit">Lease Item</button>
             </form>
         </div>
     </div>
 
     <script>
-        async function fetchAndShowResults() {
-            const query = this.value;
-            const resultsDiv = document.getElementById("searchResults");
 
-            const response = await fetch(`/search_items?query=${encodeURIComponent(query)}&facName={{ facname }}`);
-            const items = await response.json();
-
-            // Clear old results
-            resultsDiv.innerHTML = "";
-
-            if (items.length > 0) {
-                items.forEach(item => {
-                    const option = document.createElement("div");
-
-                    // Create span for name
-                    const nameSpan = document.createElement("span");
-                    nameSpan.textContent = item.name;
-
-                    // Create span for ID (right-aligned)
-                    const idSpan = document.createElement("span");
-                    idSpan.textContent = `ID: {{ facname }}-${item.id}`;
-                    idSpan.classList.add("itemId");
-
-                    // Append spans to option
-                    option.appendChild(nameSpan);
-                    option.appendChild(idSpan);
-
-                    option.onclick = () => {
-                        document.getElementById("searchBox").value = item.name; // fill in the box
-                        resultsDiv.style.display = "none";
-
-                        // Show the ID grayed out on the right side
-                        document.getElementById("searchIdOverlay").textContent = 'ID: {{ facname }}-' + item.id;
-
-                        // Store the ID for form submission
-                        document.getElementById("selectedItemId").value = item.id;
-                    };
-                    resultsDiv.appendChild(option);
-                });
-                resultsDiv.style.display = "block";
-            } else {
-                resultsDiv.style.display = "none";
+        function setupSearch(selectedSearch) { // this allows for either Item or Borrower to be setup
+            let idfront = '';
+            if (selectedSearch === 'Item') {
+                idfront = '{{ facname }}-';
             }
-        };
 
-        //search on input in the search box
-        document.getElementById("searchBox").addEventListener("input", fetchAndShowResults);
-        //search when clicking on the search box
-        document.getElementById("searchBox").addEventListener("focus", fetchAndShowResults);
+            async function fetchAndShowResults() {
+                const query = this.value;
+                const resultsDiv = document.getElementById(`${selectedSearch}searchResults`);
 
-        // Hide results when clicking outside the search box or results
-        document.addEventListener("click", function(event) {
-            const resultsDiv = document.getElementById("searchResults");
-            if (!resultsDiv.contains(event.target) && event.target.id !== "searchBox") {
-                resultsDiv.style.display = "none"; 
-            }
-        });
+                const response = await fetch(`/search_${selectedSearch}?query=${encodeURIComponent(query)}&facName={{ facname }}`);
+                const results = await response.json();
+
+                // Clear old results items
+                resultsDiv.innerHTML = "";
+
+                if (results.length > 0) {
+                    results.forEach(result => {
+                        const option = document.createElement("div");
+
+                        // Create span for name
+                        const nameSpan = document.createElement("span");
+                        nameSpan.textContent = result.name;
+
+                        // Create span for ID (right-aligned) 
+                        const idSpan = document.createElement("span");
+                        idSpan.textContent = `ID: ${idfront}${result.id}`;
+                        idSpan.classList.add(`${selectedSearch}Id`);
+
+                        // Append spans to option
+                        option.appendChild(nameSpan);
+                        option.appendChild(idSpan);
+
+                        option.onclick = () => {
+                            document.getElementById(`${selectedSearch}searchBox`).value = result.name; // fill in the box
+                            resultsDiv.style.display = "none";
+
+                            // Show the ID grayed out on the right side
+                            document.getElementById(`${selectedSearch}searchIdOverlay`).textContent = `ID: ${idfront}` + result.id;
+
+                            // Store the ID for form submission
+                            document.getElementById(`selected${selectedSearch}Id`).value = result.id;
+                        };
+                        resultsDiv.appendChild(option);
+                    });
+                    resultsDiv.style.display = "block";
+                } else {
+                    resultsDiv.style.display = "none";
+                }
+            };
+
+            //search on input in the search box
+            document.getElementById(`${selectedSearch}searchBox`).addEventListener("input", fetchAndShowResults);
+            //search when clicking on the search box
+            document.getElementById(`${selectedSearch}searchBox`).addEventListener("focus", fetchAndShowResults);
+
+            // Hide results when clicking outside the search box or results
+            document.addEventListener("click", function(event) {
+                const resultsDiv = document.getElementById(`${selectedSearch}searchResults`);
+                if (!resultsDiv.contains(event.target) && event.target.id !== `${selectedSearch}searchBox`) {
+                    resultsDiv.style.display = "none"; 
+                }
+            });
+        }
         
+        // Initialize search boxes for item and borrower
+        setupSearch('Item');
+        setupSearch('Borrower');
     </script>
 {% endblock %}

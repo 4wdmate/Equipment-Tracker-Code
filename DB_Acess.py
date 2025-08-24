@@ -28,6 +28,14 @@ def GetAllItems(facName):
     db.close()
     return [dict(row) for row in items]
 
+#gets a dictionary of all borrowers in the database
+def GetAllBorrowers():
+    db = GetDB()
+    borrowers = db.execute("""SELECT borrowerID, borrowerName
+                        FROM Borrowers""").fetchall()
+    db.close()
+    return [dict(row) for row in borrowers]
+
 #adds a new item to the database
 def AddItem(facName, itemName, itemDescription, itemCount, itemLocation, itemPurchaseDate, itemNotes):
     db = GetDB()
@@ -63,4 +71,14 @@ def ReturnItem(leaseID, itemNotes, itemDamaged, returnDate):
                 WHERE itemID = (SELECT lease_itemID FROM Lease WHERE leaseID = ?)""",
                 (itemNotes, leaseID))
     db.commit()
+    db.close()
+
+def LeaseItem(itemID, borrowerID, facName, leaseDate, signed):
+    db = GetDB()
+    facID = db.execute("SELECT facID FROM Facilities WHERE facName = ?", (facName,)).fetchone()
+    if facID:
+        db.execute("""INSERT INTO Lease (lease_itemID, lease_borrowerID, lease_facID, leaseDate, leaseSigned, leaseDamaged, leaseReturnDate)
+                    VALUES (?, ?, ?, ?, ?, 0, '')""",
+                    (itemID, borrowerID, facID['facID'], leaseDate, signed))
+        db.commit()
     db.close()

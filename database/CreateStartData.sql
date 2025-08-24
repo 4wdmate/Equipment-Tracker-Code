@@ -44,4 +44,14 @@ borrowerName TEXT NOT NULL
 );
 
 INSERT INTO Borrowers (borrowerName) VALUES
-('Timmothy');
+('Timmothy'),
+('Alex'),
+('John'),
+('Jane'),
+('Doe'),
+('Smith'),
+('Emily'),
+('Michael'),
+('Sarah'),
+('David'),
+('Laura');
