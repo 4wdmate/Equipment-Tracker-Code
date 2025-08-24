@@ -157,6 +157,15 @@ main h6 {
     resize: vertical;
 }
 
+.deletebutton {
+    background-color: #f44336;
+    color: white;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+}
+
 .submitbutton {
     background-color: #04AA6D;
     color: white;

@@ -113,9 +113,29 @@ def items(facName):
     items = DB_Acess.GetAllItems(facName)
     return render_template("items.html", facname=facName, items=items)
 
-#TODO
-@app.route("/facility/<facName>/items/(itemID)")
+#individual item page for a specific facility
+@app.route("/facility/<facName>/item/<itemID>", methods=["GET", "POST"])
 def item(facName, itemID):
-    return render_template("individual_item.html", )
+    if request.method == "POST":
+        action = request.form.get("action")
+        if action == "save":
+            # Handle form submission for adding a new item
+            itemName = request.form.get("itemName")
+            itemDescription = request.form.get("itemDescription")
+            itemCount = request.form.get("itemCount")
+            itemLocation = request.form.get("itemLocation")
+            itemPurchaseDate = request.form.get("itemPurchaseDate")
+            itemNotes = request.form.get("itemNotes")
+
+            DB_Acess.UpdateItem(itemID, itemName, itemDescription, itemCount, itemLocation, itemPurchaseDate, itemNotes)
+        
+        if action == "delete":
+            print("deleting item")
+            DB_Acess.DeleteItem(itemID)
+
+        return redirect(f"/facility/{facName}/items")
+    
+    itemData =DB_Acess.GetItemByID(itemID)
+    return render_template("individual_item.html", facname=facName, itemid=itemID , item=itemData)
 
 app.run(debug=True, port=5000)

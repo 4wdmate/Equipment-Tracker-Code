@@ -10,6 +10,15 @@ def GetDB():
     db.row_factory = sqlite3.Row
     return db
 
+#todo (needs to check for returns that have a non existant user or item)
+
+def FixDB():
+    pass
+
+#todo (clears any items that have already been returned)
+def ClearOldReturns():
+    pass
+
 # gets a list of all facilities in the database
 def GetAllFacilities():
     db = GetDB()
@@ -28,6 +37,25 @@ def GetAllItems(facName):
     db.close()
     return [dict(row) for row in items]
 
+#gets a dictionary of a specific item in the database by its ID
+def GetItemByID(itemID):
+    db = GetDB()
+    item = db.execute("""SELECT itemID, itemName, itemDescription, itemCount, itemLocation, itemPurchaseDate, itemNotes, item_facID
+                        FROM Items
+                        WHERE itemID = ?""", (itemID,)).fetchone()
+    db.close()
+    if item:
+        return dict(item)
+    else:
+        return None
+
+#deletes an item from the database by its id
+def DeleteItem(itemID):
+    db = GetDB()
+    db.execute("DELETE FROM Items WHERE itemID = ?", (itemID,))
+    db.commit()
+    db.close()
+
 #gets a dictionary of all borrowers in the database
 def GetAllBorrowers():
     db = GetDB()
@@ -45,6 +73,16 @@ def AddItem(facName, itemName, itemDescription, itemCount, itemLocation, itemPur
                     VALUES (?, ?, ?, ?, ?, ?, ?)""",
                     (itemName, itemDescription, itemCount, itemLocation, itemPurchaseDate, itemNotes, facID['facID']))
         db.commit()
+    db.close()
+
+#updates an existing item in the database
+def UpdateItem(itemID, itemName, itemDescription, itemCount, itemLocation, itemPurchaseDate, itemNotes):
+    db = GetDB()
+    db.execute("""UPDATE Items
+                SET itemName = ?, itemDescription = ?, itemCount = ?, itemLocation = ?, itemPurchaseDate = ?, itemNotes = ?
+                WHERE itemID = ?""",
+                (itemName, itemDescription, itemCount, itemLocation, itemPurchaseDate, itemNotes, itemID))
+    db.commit()
     db.close()
 
 #gets a dictionary of all the returns in the database for a specific facility

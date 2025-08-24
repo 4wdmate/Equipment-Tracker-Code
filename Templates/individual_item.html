@@ -1,0 +1,29 @@
+{% extends "base-facility.html" %}
+
+{% block facility_content %}
+<div class="shift_text_content">
+    <p>Change or just view any of the following item data</p>
+    <form action="/facility/{{ facname }}/item/{{ itemid }}" method="POST">
+        <label>Item Name*</label><br>
+        <input class="addnewinput" style="width: 30%;" type="text" name="itemName" value="{{ item['itemName'] }}" required><br>
+
+        <label>Count*</label><br>
+        <input class="addnewinput" style="width: 7%;" type="number" name="itemCount" min="1" value="{{ item['itemCount'] }}" required><br>
+
+        <label>Description</label><br>
+        <textarea class="addnewinput" name="itemDescription">{{ item['itemDescription'] }}</textarea><br>
+
+        <label>Room / location</label><br>
+        <input class="addnewinput" style="width: 20%;" type="text" name="itemLocation" value="{{ item['itemLocation'] }}"><br>
+
+        <label>Purchase Date</label><br>
+        <input class="addnewinput" style="width: auto;" type="date" name="itemPurchaseDate" value="{{ item['itemPurchaseDate'] }}"></input><br>
+
+        <label>Notes</label><br>
+        <textarea class="addnewinput" style="height: 60px;" name="itemNotes">{{ item['itemNotes'] }}</textarea><br>
+
+        <button class="submitbutton" type="submit" name="action" value="save">Save Changes</button>
+        <button class="deletebutton" type="submit" name="action" value="delete" onclick="return confirm('Are you sure you want to delete this item? This action cannot be undone.');">Delete Item</button>
+    </form>
+</div>
+{% endblock %}
