@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, session, redirect, jsonify
 import DB_Acess
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "gtg"
@@ -26,14 +27,14 @@ def facilities():
 def facility(facName):
     return render_template("Facility.html", facname=facName)
 
-#lease item page
+#lease item page (facility specific)
 @app.route('/facility/<facName>/loan', methods=["GET", "POST"])
 def loan(facName):
     if request.method == "POST":
         itemID = request.form.get("itemId")
+        borrowerName = request.form.get("borrowerName")
         # Here you would handle the leasing logic, e.g., updating the database
         # For now, we just print the item ID to the console
-        print(f"Leasing item with ID: {itemID} from facility: {facName}")
         return redirect(f"/facility/{facName}")
     return render_template("loan.html", facname=facName)
 
@@ -52,6 +53,26 @@ def loan_search_items():
                ]
 
     return jsonify(results)
+
+#return page (facility specific)
+@app.route("/facility/<facName>/returns", methods=["GET", "POST"])
+def returns(facName):
+    if request.method == "POST":
+        leaseID = request.form.get("leaseID")
+        itemNotes = request.form.get("itemNotes")
+        itemDamaged = request.form.get("itemDamaged")
+        if itemDamaged == 'on':
+            itemDamaged = 1
+        else:
+            itemDamaged = 0
+        returnDate = datetime.today().strftime('%Y-%m-%d')
+        print(f"Lease ID: {leaseID}, Notes: {itemNotes}, Damaged: {itemDamaged}")
+        DB_Acess.ReturnItem(leaseID, itemNotes, itemDamaged, returnDate)
+        return redirect(f"/facility/{facName}/returns")
+    
+    returns = DB_Acess.GetAllActiveReturns(facName)
+    return render_template("return.html", facname=facName, returns=returns)
+
 
 #item list page for a specific facility (also includes popup with form to add new items)
 @app.route("/facility/<facName>/items", methods=["GET", "POST"])

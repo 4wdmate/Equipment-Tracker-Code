@@ -20,19 +20,23 @@ itemNotes TEXT NOT NULL
 );
 
 INSERT INTO Items (itemName, item_facID, itemDescription,  itemCount, itemLocation, itemPurchaseDate, itemNotes) VALUES
-('Tripod', 1, 'its a tripod', 1, 'C25', '2024-10-28', 'none'),
-('Camera' , 1, 'its a camera', 2, 'C25', '2024-10-28', 'none');
+('Tripod', 1, 'its a tripod', 1, 'C25', '2024-10-28', ''),
+('Camera' , 1, 'its a camera', 2, 'C25', '2024-10-28', '');
 
-CREATE TABLE Loans(
-loanID INTEGER PRIMARY KEY AUTOINCREMENT,
-loan_ItemID INTEGER,
-loan_borrowerID INTEGER,
-signed BOOLEAN,
-damaged BOOLEAN
+CREATE TABLE Lease(
+leaseID INTEGER PRIMARY KEY AUTOINCREMENT,
+lease_ItemID INTEGER,
+lease_borrowerID INTEGER,
+lease_facID INTEGER,
+leaseDate TEXT NOT NULL,
+leaseReturnDate TEXT NOT NULL,
+leaseSigned BOOLEAN,
+leaseDamaged BOOLEAN
 );
 
-INSERT INTO Loans (loan_ItemID, loan_borrowerID, signed, damaged) VALUES
-(1, 1, True, False);
+INSERT INTO Lease (lease_ItemID, lease_borrowerID, lease_facID, leaseDate, leaseReturnDate, leaseSigned, leaseDamaged) VALUES
+(1, 1, 1, '2025-08-23', '', True, False),
+(2, 1, 1, '2025-08-20', '2025-08-21', True, False);
 
 CREATE TABLE Borrowers(
 borrowerID INTEGER PRIMARY KEY AUTOINCREMENT,

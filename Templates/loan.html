@@ -6,13 +6,16 @@
         <p>Here you can lease items from the facility.</p>
         <div>
             <form action="/facility/{{ facname }}/loan" method="POST">
-                <label for="itemID">Item</label><br>
+                <label for="itemID">Item*</label><br>
                 <div style="position: relative; display: inline-block;">
-                    <input class="addnewinput" type="text" id="searchBox" placeholder="Search items..." autocomplete="off">
+                    <input class="addnewinput" style="width: 200px;" type="text" id="searchBox" placeholder="Search items..." autocomplete="off" required>
                     <span id="searchIdOverlay" class="searchoverlay"></span> 
                     <input type="hidden" id="selectedItemId" name="itemId"> 
                 </div>
-                <div id="searchResults" class="dropdown"></div><br>
+                <div id="searchResults" class="dropdown"></div><br><br>
+
+                <label>Borrower* TODO</label><br>
+                <input class="addnewinput" style="width: 200px;" type="text" id="borrowerName" placeholder="Enter borrower's name" required><br>
                 
                 <br><button class="submitbutton" type="submit">Lease Item</button>
             </form>
@@ -40,7 +43,7 @@
 
                     // Create span for ID (right-aligned)
                     const idSpan = document.createElement("span");
-                    idSpan.textContent = `ID: ${item.id}`;
+                    idSpan.textContent = `ID: {{ facname }}-${item.id}`;
                     idSpan.classList.add("itemId");
 
                     // Append spans to option
@@ -52,7 +55,7 @@
                         resultsDiv.style.display = "none";
 
                         // Show the ID grayed out on the right side
-                        document.getElementById("searchIdOverlay").textContent = 'ID: ' + item.id;
+                        document.getElementById("searchIdOverlay").textContent = 'ID: {{ facname }}-' + item.id;
 
                         // Store the ID for form submission
                         document.getElementById("selectedItemId").value = item.id;

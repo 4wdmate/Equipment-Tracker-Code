@@ -14,25 +14,42 @@ main {
     margin: 0;
     padding: 0;
     width: var(--side-pixel);
-    background-color: #f1f1f1;
+    background-color: #333;
     position: fixed;
     top: 0;
     left: 0;
     height: 100%;
     overflow: auto;
     text-align: center;
+    vertical-align: bottom;
 }
 
 .side a{
     display: inline-block;
-    color: #1d1d1d;
-    padding: 10px 0px;
-    background-color: rgb(155, 155, 155);
-    width: var(--side-pixel);
+    color: #ffffff;
+    padding: 0px 0px;
+    background-color: #333;
+    width: calc(var(--side-pixel) - 20px);
+    height: calc(var(--side-pixel) - 20px);
+    margin-top: 10px;
+    align-content: end;
+    text-decoration: none;
+    border-radius: 15px;
+    position: relative;
 }
 
 .side a:hover{
-    background-color: rgb(167, 130, 130);
+    background-color: rgb(136, 120, 120);
+}
+
+.sidebarimg {
+    width: 80%;
+    height: 80%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    padding: 10%;
+    padding-top: 0px;
 }
 
 main h6 {
@@ -74,6 +91,7 @@ main h6 {
     text-align: left;
     font-size: 40px;
     margin: 0;
+    margin-left: 15px
 }
 
 .topbar {
@@ -101,7 +119,7 @@ main h6 {
     color: white;
 }
 
-a.listed_item {
+.listed_item {
     background-color: #f0f0f0;
     border-radius: 10px;
     padding: 3px;
@@ -111,7 +129,7 @@ a.listed_item {
     display: block;
 } 
 
-a.listed_item:hover {
+.listed_item:hover {
     background-color: #d6d6d6;
 } 
 

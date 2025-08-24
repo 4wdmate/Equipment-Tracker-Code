@@ -38,3 +38,29 @@ def AddItem(facName, itemName, itemDescription, itemCount, itemLocation, itemPur
                     (itemName, itemDescription, itemCount, itemLocation, itemPurchaseDate, itemNotes, facID['facID']))
         db.commit()
     db.close()
+
+#gets a dictionary of all the returns in the database for a specific facility
+def GetAllActiveReturns(facName):
+    db = GetDB()
+    loans = db.execute("""SELECT leaseID, lease_itemID, lease_borrowerID, lease_facID, leaseDate, leaseReturnDate, leaseSigned, leaseDamaged, itemName, itemDescription, itemCount, itemLocation, itemNotes, facName, borrowerName
+                        FROM Lease
+                        JOIN Facilities ON Lease.lease_facID = Facilities.facID
+                        JOIN Items ON lease.lease_itemID = Items.itemID
+                        JOIN Borrowers ON lease.lease_borrowerID = Borrowers.borrowerID
+                        WHERE facName = ? AND leaseReturnDate = ''
+                        """, (facName,)).fetchall()
+    db.close()
+    return [dict(row) for row in loans]
+
+def ReturnItem(leaseID, itemNotes, itemDamaged, returnDate):
+    db = GetDB()
+    db.execute("""UPDATE Lease
+                SET leaseReturnDate = ?, leaseDamaged = ?
+                WHERE leaseID = ?""",
+                (returnDate, itemDamaged, leaseID))
+    db.execute("""UPDATE Items
+                SET itemNotes = ?
+                WHERE itemID = (SELECT lease_itemID FROM Lease WHERE leaseID = ?)""",
+                (itemNotes, leaseID))
+    db.commit()
+    db.close()

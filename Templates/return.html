@@ -1,0 +1,94 @@
+{% extends "base-facility.html" %}
+
+{% block facility_content %}
+    <div class="shift_text_content">
+        <h1>Return Page</h1>
+        <p>Select one of the returns that need to be resolved below</p>
+    </div>
+    {% for return in returns %}
+        <div class="listed_item" onclick="openModal(this)"
+        data-id="{{ return['leaseID'] }}" 
+        data-borrower="{{ return['borrowerName'] }}" 
+        data-leasedate="{{ return['leaseDate'] }}"
+        data-itemname="{{ return['itemName'] }}"
+        data-itemdescription="{{ return['itemDescription'] }}"
+        data-itemlocation="{{ return['itemLocation'] }}"
+        data-itemfullid="{{ return['facName'] }}-{{ return['lease_ItemID'] }}"
+        data-facname="{{ return['facName'] }}"
+        data-itemnotes="{{ return['itemNotes'] }}">
+
+            <table style="width:100%;">
+                <tr>
+                    <td style="width: 10%;"><strong>{{ return["borrowerName"] }}<strong></td>
+                    <td style="width: 4.5%;">{{ return["leaseDate"] }}</td>
+                    <td style="width:10%; text-align: center;">|</td>
+                    <td style="width:10%;"><strong>{{ return["itemName"] }}</strong></td>
+                    <td style="width:55.5%;"> {{ return["itemDescription"] }} </td>
+                    <td style="width:10%;"> {{ return["facName"] }}-{{ return["lease_ItemID"] }} </td>
+                </tr>
+            </table>
+        </div>
+    {% endfor %}
+
+    <div id="itemModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Declare Item as Returned</h2>
+            <p>Borrower: <span id="modalBorrower"></span></p>
+            <p>Borrow Date: <span id="modalLeaseDate"></span></p>
+            <hr>
+            <p>Item: <span id="modalItemName"></span></p>
+            <p>Description: <span id="modalDescription"></span></p>
+            <p>Location: <span id="modalLocation"></span></p>
+            <p>Item ID: <span id="modalItemID"></span></p>
+            <hr>
+            <p>Facility: <span id="modalFacilityName"></span></p>
+
+            <br>
+            <h2>Return Details</h2>
+            <form action="/facility/{{ facname }}/returns" method="POST">
+                <input type="hidden" name="leaseID" id="modalLeaseID">
+                <label>was the item damaged?</label><br>
+                <input type="checkbox" id="itemDamaged" name="itemDamaged"><br>
+                <label>Additional Notes</label><br>
+                <textarea class="addnewinput" style="height: 60px;" id="itemNotes" name="itemNotes" value="test" placeholder="Enter any additional notes here"></textarea><br>
+                
+                <button class="submitbutton" type="submit">Return Item</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(element) {
+        document.getElementById("itemModal").style.display = "flex";
+
+        // Fill modal with data from clicked item
+        document.getElementById("modalBorrower").innerText = element.dataset.borrower;
+        document.getElementById("modalLeaseDate").innerText = element.dataset.leasedate;
+        document.getElementById("modalItemName").innerText = element.dataset.itemname;
+        document.getElementById("modalDescription").innerText = element.dataset.itemdescription;
+        document.getElementById("modalLocation").innerText = element.dataset.itemlocation;
+        document.getElementById("modalItemID").innerText = element.dataset.itemfullid;
+        document.getElementById("modalFacilityName").innerText = element.dataset.facname;
+        if (!element.dataset.itemnotes || element.dataset.itemnotes !== "none") {
+            document.getElementById("itemNotes").value = element.dataset.itemnotes;
+        }
+        
+
+        // Hidden input for form
+        document.getElementById("modalLeaseID").value = element.dataset.id;
+        }
+
+        function closeModal() {
+        document.getElementById("itemModal").style.display = "none";
+        }
+
+        // close if user clicks outside the modal
+        window.onclick = function(event) {
+        let modal = document.getElementById("itemModal");
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+        }
+    </script>
+{% endblock %} 
